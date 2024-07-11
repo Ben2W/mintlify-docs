@@ -25,30 +25,20 @@
   "navigation": [
     {
       "group": "",
-      "pages": ["introduction", "quickstart", "development"]
+      "pages": ["introduction", "self-host", "using-the-migrations-api"]
     },
     {
-      "group": "Essentials",
+      "group": "Guides",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        "guides/supabase",
+        "guides/next-auth",
+        "guides/auth-0",
+        "guides/other-auth-providers"
       ]
     },
     {
       "group": "API Documentation",
       "pages": ["api-reference/introduction"]
-    },
-    {
-      "group": "Endpoint Examples",
-      "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
-      ]
     }
   ],
   "footerSocials": {
