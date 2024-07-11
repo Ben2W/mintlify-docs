@@ -4,4 +4,111 @@ description: "How to migrate your auth from Supabase to Clerk"
 icon: "square-bolt"
 ---
 
-## Migrating From Supabase To Clerk
+## Prerequisites
+
+- A Supabase account
+- A Clerk account
+- Good understanding of expand and contract database migrations
+- You've read [using the Migrations API](/using-the-migrations-api)
+
+## Step 1 "Expand": Trickle Migrating Your Supabase Users.
+
+Following a standard expand-and-contract database migration we need to start with the "Expand step"
+
+So everytime you create or edit user data in Supabase, you'll need to create or edit the user in Clerk. You can use the Migrations API to do this.
+
+We recommend creating database triggers, since these will ensure that the migration is atomic and consistent.
+
+First use Supabase Vault to add your Clerk API key to the database. [Read More](https://supabase.com/docs/guides/database/vault)
+
+<Note>
+  The following triggers are examples that migrate basic user data and assume
+  you entered the Clerk API key in Supabase Vault as `CLERK_API_KEY`. If you
+  need to migrate additional custom data (such as user roles), you'll need to
+  modify these triggers accordingly.
+</Note>
+
+Here are two example `auth.users` triggers you can use:
+
+### Create User Trigger
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_net;
+
+CREATE OR REPLACE FUNCTION enqueue_clerk_create_user()
+RETURNS TRIGGER AS $$
+DECLARE
+    request_body JSONB;
+    response JSONB;
+    http_status INT;
+BEGIN
+
+    request_body := jsonb_build_object(
+        'external_id', NEW.id::TEXT,
+        'email_address', NEW.email,
+        'password_hasher', 'bcrypt',
+        'password_digest', NEW.encrypted_password,
+        'created_at', to_char(NEW.created_at, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')
+
+    );
+
+    select
+        net.http_post(
+        url := 'https://api.clerk.com/v1/migrations/users',
+        body := request_body,
+        headers := jsonb_build_object(
+            'Content-Type', 'application/json',
+            'Authorization', 'Bearer ' || vault.get_secret('CLERK_API_KEY')
+        )
+    ) as request_id into response;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_enqueue_clerk_create_user
+AFTER INSERT ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION enqueue_clerk_create_user();
+```
+
+### Edit User Trigger
+
+```sql
+CREATE EXTENSION IF NOT EXISTS pg_net;
+
+CREATE OR REPLACE FUNCTION enqueue_clerk_edit_user()
+RETURNS TRIGGER AS $$
+DECLARE
+    request_body JSONB;
+    response JSONB;
+    http_status INT;
+BEGIN
+
+    request_body := jsonb_build_object(
+        'external_id', NEW.id::TEXT,
+        'email_address', NEW.email,
+        'password_hasher', 'bcrypt',
+        'password_digest', NEW.encrypted_password,
+        'created_at', to_char(NEW.created_at, 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"')
+    );
+
+    select
+        net.http_patch(
+        url := 'https://api.clerk.com/v1/migrations/users/' || NEW.id::TEXT,
+        body := request_body,
+        headers := jsonb_build_object(
+            'Content-Type', 'application/json',
+            'Authorization', 'Bearer ' || vault.get_secret('CLERK_API_KEY')
+        )
+    ) as request_id into response;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_enqueue_clerk_edit_user
+AFTER UPDATE ON auth.users
+FOR EACH ROW
+EXECUTE FUNCTION enqueue_clerk_edit_user();
+```
