@@ -1,68 +1,75 @@
 ---
 title: Introduction
-description: 'Welcome to the home of your new documentation'
+description: "Welcome To the Clerk Migrations Documentation!"
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.svg"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.svg"
-  alt="Hero Dark"
-/>
+# Migrating Auth Is Hard
 
-## Setting up
+It takes 5 minutes to set up auth with clerk. You get user management, organization management, roles, and much more. But what if you already are using an auth system, and you have users or even organizations?
 
-The first step to world-class documentation is setting up your editing environments.
+Well then it's not so easy.
+
+If you want to do a zero-downtime migration there are gotchas around every corner, 200 edges cases to worry about, rate limits, multiple ids floating around, different sessions, it's a nightmare.
+
+Is the solution then to take your app offline for several hours, rushing to transfer all your critical data to a new authentication system, one that is impossible to rollback from if you mess up the transfer?
+
+## Introducing the Migrations API
+
+That's why we made the **Migrations API**. It allows you to easily call the clerk api, but hides all the complexity of managing user ids, rate limits, api call ordering, and queue management from you.
+
+With the **Migrations API**, what was once a nightmarish task becomes a manageable expand-and-contract data migration. This API not only provides you with **observability** through a live dashboard and logs but also **flexibility**. You can pause, restart, or even abandon a migration without risk, all while maintaining zero downtime. By the end of the process, your users might not even realize they've been transitioned to a new system.
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
+    title="Self Hosting Your API"
+    icon="stars"
     href="https://mintlify.com/docs/quickstart"
   >
-    Get your docs set up locally for easy development
+    Get the migrations hosted using Cloudflare Workers!
   </Card>
   <Card
-    title="Preview Changes"
-    icon="image"
+    title="Using The Migrations API"
+    icon="code"
     href="https://mintlify.com/docs/development"
   >
-    Preview your changes before you push to make sure they're perfect
+    Learn how to use the Migrations API to migrate your users and organizations.
   </Card>
 </CardGroup>
 
-## Make it yours
+## Implement the migration into your app.
 
-Update your docs to your brand and add valuable content for the best user conversion.
+We've made a series of guides and packages to help you implement the Migrations API into your app.
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
+    title="Supabase Guide"
+    icon="square-bolt"
+    color="#15593B"
     href="https://mintlify.com/docs/settings/global"
   >
-    Customize your docs to your company's colors and brands
+    Migrate your Supabase users to Clerk.
   </Card>
   <Card
-    title="Reference APIs"
-    icon="code"
+    title="Next-Auth Guide"
+    icon="key"
+        iconType="solid"
+
     href="https://mintlify.com/docs/api-playground/openapi"
-  >
+
+>
+
     Automatically generate endpoints from an OpenAPI spec
+
   </Card>
   <Card
-    title="Add Components"
+    title="Auth0 Guide"
     icon="screwdriver-wrench"
     href="https://mintlify.com/docs/components/accordion"
   >
     Build interactive features and designs to guide your users
   </Card>
   <Card
-    title="Get Inspiration"
+    title="Using Other Auth Providers"
     icon="stars"
     href="https://mintlify.com/customers"
   >
