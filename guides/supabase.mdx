@@ -11,7 +11,7 @@ icon: "square-bolt"
 - Good understanding of expand and contract database migrations
 - You've read [using the Migrations API](/using-the-migrations-api)
 
-## Step 1 "Expand": Trickle Migrating Your Supabase Users.
+## Step 1: Trickle Migrating Your Supabase Users.
 
 Following a standard expand-and-contract database migration we need to start with the "Expand step"
 
@@ -19,7 +19,15 @@ So everytime you create or edit user data in Supabase, you'll need to create or 
 
 We recommend creating database triggers, since these will ensure that the migration is atomic and consistent.
 
-First use Supabase Vault to add your Clerk API key to the database. [Read More](https://supabase.com/docs/guides/database/vault)
+### First use Supabase Vault to add your Clerk API key to the database.
+
+The Migrations API requires the clerk secret key to authenticate a request. So you should add your Clerk API key to the Supabase vault, allow Supabase scripts to read the secret.
+
+[Read More](https://supabase.com/docs/guides/database/vault)
+
+The examples below assume you added the clerk secret key to the Supabase vault as `CLERK_API_KEY`.
+
+### Now Create The Triggers You Need
 
 <Note>
   The following triggers are examples that migrate basic user data and assume
@@ -28,9 +36,11 @@ First use Supabase Vault to add your Clerk API key to the database. [Read More](
   modify these triggers accordingly.
 </Note>
 
-Here are two example `auth.users` triggers you can use:
-
 ### Create User Trigger
+
+This trigger creates a user in Clerk when a user is created in Supabase.
+
+Read the original `POST /users` [documentation](https://clerk.com/docs/reference/backend-api/tag/Users#operation/CreateUser) for more the full list of fields.
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_net;
@@ -74,6 +84,10 @@ EXECUTE FUNCTION enqueue_clerk_create_user();
 
 ### Edit User Trigger
 
+This trigger edits a user in Clerk when a user is edited in Supabase.
+
+Read the original `PATCH /users` [documentation](https://clerk.com/docs/reference/backend-api/tag/Users#operation/UpdateUser) for more the full list of fields.
+
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_net;
 
@@ -112,3 +126,49 @@ AFTER UPDATE ON auth.users
 FOR EACH ROW
 EXECUTE FUNCTION enqueue_clerk_edit_user();
 ```
+
+## Step 2: Importing Users into Clerk
+
+<Note>
+  Under Construction.
+
+However, all we need to do is call the `POST /migrations/users` endpoint with the `external_id` of each user.
+
+We can have a dashboard import button, a cli, a script, or trigger to do this, but I haven't worked it out yet.
+
+</Note>
+
+## Step 3: Using Clerk Auth In Supabase RLS
+
+<Note>
+
+This section is currently under construction.
+
+We will need to do something like this: https://supabase.com/partners/integrations/clerk
+
+But I need to figure out the easiest way to modify RLS policies.
+
+</Note>
+
+## Step 4: Migrate Your App to Use Clerk
+
+Now you can finally start modifying your app to use Clerk for authentication!
+
+For Supabase we created a React package to help you migrate your app to use Clerk.
+
+If you aren't using React, you can still migrate your app to Clerk, but you should reference [using other auth providers](/guides/other-auth-providers) instead.
+
+[Read More](/supabase-react)
+
+### Create Supabase Functions to get Migration Status and Auth Token
+
+We need you to copy and paste the following functions into your Supabase project.
+
+<Note>Under Construction xD Working on this right now.</Note>
+
+### Using @clerk/supabase-auth-migrator
+
+<Note>
+  This is a mock guide... if you want to play around with the package I built
+  let me know and I will help.
+</Note>
