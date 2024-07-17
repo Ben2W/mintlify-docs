@@ -27,7 +27,11 @@ For example, if you have a table called `users` and a table called `user_first_n
 If you are using Supabase or Auth0, your user data already has these columns. However, if you split your user data into multiple tables, this requirment still applies.
 </Tip>
 
-Here are example sql scripts for common databases:
+### Creating indexes.
+
+Clerk Polling will be searching through your user data using `created_at` and `updated_at` so it is recommended to create indexes on those attributes.
+
+### Here are example sql scripts for common databases:
 
 <AccordionGroup>
   <Accordion title="MySQL">
@@ -111,6 +115,7 @@ model User {
 
   ### Drizzle
 
+
 Currently Drizzle doesn't support triggers or functions. 
 **MySQL** is the only database where Drizzle allows you set the update functionality on.
 For all other databases for Drizzle, you'll have to add the triggers directly in the migration scripts.
@@ -183,6 +188,9 @@ BEGIN
   UPDATE users SET updated_at = strftime('%s', 'now') WHERE id = OLD.id;
 END;
 ```
+
+  @TODO, Drizzle has index support, I should add that, but i am tired.
+
 
 
   </Accordion>
