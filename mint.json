@@ -25,7 +25,7 @@
   "navigation": [
     {
       "group": "",
-      "pages": ["introduction", "self-host", "using-the-migrations-api"]
+      "pages": ["introduction","syncing-user-data"]
     },
     {
       "group": "Guides",

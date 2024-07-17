@@ -4,4 +4,8 @@ description: How to migrate your auth from Auth0 to Clerk
 icon: "screwdriver-wrench"
 ---
 
-under construction
+under construction, however I want to note one thing.
+
+Auth0 has updated_at and created_at columns, but because their query engine is weird, the polling script will have to be much more complicated.
+
+**But** since the Auth0 data is predefined, I am thinking we can provide "templates" fixing this issue.
