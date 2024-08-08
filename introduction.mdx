@@ -5,34 +5,55 @@ description: "Welcome To the Clerk Migrations Documentation!"
 
 # Migrating Auth
 
-It takes 5 minutes to set up auth with clerk. You get user management, organization management, roles, and much more. But what if you already are using an auth system, and you have users or even organizations?
+It takes 5 minutes to set up auth with clerk. You get user management, organization management, roles, and much more. But what if you already are using an auth system, and you already have users?
 
 This guide is here to help you through the process.
 
 ## Using Expand and Contract.
- 
-Our auth migration follows a similiar pattern to the common expand and contract process. [Read More here](https://www.prisma.io/dataguide/types/relational/expand-and-contract-pattern)
+
+Our auth migration follows a similar pattern to the common expand-and-contract process, providing a reversible and zero-downtime migration experience.
+
+However, because migrating auth is more complex than simply migrating data, we've made a <b>Migrations Trickle Wrapper</b> React component, a <b>Clerk Migrations API</b>, and a <b>Clerk Migrations Dashboard</b> to help you with the migration.
 
 <Steps>
-  <Step title="Sync Your Data to Clerk.">
-    Use <b>Clerk Polling</b> to sync your data to Clerk. [Read More Here.](/syncing-user-data)
+  <Step title="Tell Us Who's On Your Site">
+    In order to ensure data integrity and allow reversibility, we need to know
+    about current and future users on your site. [Read
+    Here](/migrations-trickle-wrapper) to add and configure the migrations
+    trickle wrapper.
+  </Step>
+  <Step title="Tell Us Who's Not On Your Site">
+    There will be users who we won't know about, simply because they're not on
+    your site. Batch those users in with the <b>Clerk Migrations Dashboard</b>
+    [Read More Here](/batch-importing-users)
+  </Step>
+  <Step title="Start Syncing Your Data to Clerk.">
+    Stub out a `POST /get-users-by-ids` function <b>in your backend</b>, and we
+    will start syncing your users to Clerk based on the ids sent from both the
+    Migrations Trickle Wrapper and the Clerk Migrations Dashboard batch tool.
   </Step>
   <Step title="Modify Your Codebase to use Clerk">
-    Now that your data is migrated, you need to modify your code to read and write to Clerk. 
-    Use our migrations tooling to help you implement Clerk features next to existing authentication code [Read More On That Here](https://www.google.com)
+    While your data is being synced, modify and test your codebase using Clerk.
+    [Read Our Quickstart Guides](https://clerk.com/docs/quickstarts/overview)
   </Step>
-  <Step title="Finalize">
-    Once your data is synced, and that you're updated code changes work as expected. You can finalize the migration on the dashboard. [Read More Here](https://www.google.com)
+  <Step title="Optional: Sign in Users to Clerk Before Going Live">
+    Once you are ready to commit to Clerk, you can use the Migrations Dashboard
+    to sign in users to Clerk <b>before</b> going live. This makes it so your
+    users never know they've been migrated! [Read More About Our
+    Seamless-Login](/signing-in-users-before-going-live)
   </Step>
-  <Step title="Clean Up">
-    Now that all your users are using clerk, you can remove references to your old auth solution.
+  <Step title="Switch To Clerk in Production">
+    Once your users are migrated and your codebase works with Clerk, you can
+    push to production. Everything after this point is <b>not reversibile</b>.
+  </Step>
+  <Step title="Continue Monitoring The Migration Dashboard Post-Migration">
+    Although all your users are switched to Clerk, we recommend to continue to
+    monitor the Migrations Dashboard to make sure everything is working. [Read
+    More About Post-Migration Monitoring](/monitoring-the-migration-dashboard)
   </Step>
 </Steps>
 
-
 ## We've made a series of guides to help you migrate
-
-
 
 <CardGroup cols={2}>
   <Card
@@ -44,14 +65,13 @@ Our auth migration follows a similiar pattern to the common expand and contract 
     Migrate your Supabase users to Clerk.
   </Card>
   <Card
-    title="Next-Auth Guide"
+    title="Auth.js Guide"
     icon="key"
     iconType="solid"
 
     href="/guides/next-auth"
 
 >
-
 
   </Card>
   <Card
